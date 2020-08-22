@@ -1,12 +1,16 @@
 from django.http import Http404
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Project, Pledge
 from .serializers import ProjectSerializer, PledgeSerializer, ProjectDetailSerializer
+from .permissions import IsOwnerOrReadOnly
 
 class ProjectList(APIView):
-
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+    
     def get(self, request):
         projects = Project.objects.all()
         serializer = ProjectSerializer(projects, many=True)
@@ -27,6 +31,10 @@ class ProjectList(APIView):
 
 
 class ProjectDetail(APIView):
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly    
+    ]
 
     def get_object(self, pk):
         try:
@@ -38,6 +46,17 @@ class ProjectDetail(APIView):
         project = self.get_object(pk)
         serializer = ProjectDetailSerializer(project)
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        project = self.get_object(pk)
+        data = request.data
+        serializer = ProjectDetailSerializer(
+            instance=project,
+            data=data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
 
 class PledgesList(APIView):
 
