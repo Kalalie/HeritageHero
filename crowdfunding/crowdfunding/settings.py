@@ -33,16 +33,26 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'projects.apps.ProjectsConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+}
+
 AUTH_USER_MODEL = 'users.CustomUser'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,3 +133,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# curl -X GET localhost:8000/projects/ -H 'Authorization: Bearer f1e2917dbaa2eeebf40c97cdb14d78d8ba20286a
+
+# curl --header "Content-Type: application/json" \
+#   --header "Authorization: Token f1e2917dbaa2eeebf40c97cdb14d78d8ba20286a" \
+#   --request POST \
+#   --data '{"username":"xyz","password":"xyz"}' \
+#   http://localhost:8000/projects/
+
