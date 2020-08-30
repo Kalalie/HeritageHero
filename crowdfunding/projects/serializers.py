@@ -49,7 +49,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.save()
         return instance
 
-class CommentSerializer(serializers.Serializer):
+class CommentSerializer(serializers.ModelSerializer):
     post = serializers.ReadOnlyField()
     name = serializers.CharField(max_length=80)
     email = serializers.EmailField()
