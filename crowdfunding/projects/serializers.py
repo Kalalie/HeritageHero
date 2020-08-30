@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Pledge
+from .models import Project, Pledge, Comment
 
 class PledgeSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -49,7 +49,20 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.save()
         return instance
 
+class CommentSerializer(serializers.Serializer):
+    post = serializers.ReadOnlyField()
+    name = serializers.CharField(max_length=80)
+    email = serializers.EmailField()
+    body = serializers.CharField()
+    created_on = serializers.DateTimeField()
+    active = serializers.BooleanField()
 
-   
+    def create(self, validated_data):
+        return Comment.objects.create(**validated_data)
+
+
+
+
+
 
 

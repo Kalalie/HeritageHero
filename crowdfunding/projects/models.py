@@ -8,7 +8,6 @@ class Project(models.Model):
     image = models.URLField()
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
-    # owner = models.CharField(max_length=200)
     owner = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
@@ -29,5 +28,19 @@ class Pledge(models.Model):
         on_delete=models.CASCADE,
         related_name='supporter_pledges'
     )
+
+class Comment(models.Model):
+    post = models.ForeignKey(Project,on_delete=models.CASCADE,related_name='comment', related_query_name="comment",)
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return 'Comment {} by {}'.format(self.body, self.name)
 
     

@@ -2,8 +2,10 @@ from django.http import Http404
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Project, Pledge
-from .serializers import ProjectSerializer, PledgeSerializer, ProjectDetailSerializer
+from .models import Project, Pledge, Comment
+from .forms import CommentForm
+from django.shortcuts import render, get_object_or_404
+from .serializers import ProjectSerializer, PledgeSerializer, ProjectDetailSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
 class ProjectList(APIView):
@@ -68,10 +70,53 @@ class ProjectDetail(APIView):
         project.delete()
         return Response(status.HTTP_204_NO_CONTENT)
 
+class CommentList(APIView):
+    def get(self, request):
+        comments = Comment.objects.values()
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    def post(self,request):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+                )
+        return Response(
+            serializer.errors,
+            status= status.HTTP_400_BAD_REQUEST
+        )
+
+class CommentDetail(APIView): 
+    def add_comment_to_project(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        comment = post.comment.filter(active=True)
+        new_comment = None
+        # Comment posted
+        if request.method == 'POST':
+            comment_form = CommentForm(data=request.POST)
+            if comment_form.is_valid():
+
+                # Create Comment object but don't save to database yet
+                new_comment = comment_form.save(commit=False)
+                # Assign the current post to the comment
+                new_comment.post = post
+                # Save the comment to the database
+                new_comment.save()
+        else:
+            comment_form = CommentForm()
+
+        return render(request, template_name, {'post': post,
+                                            'comments': comments,
+                                            'new_comment': new_comment,
+                                            'comment_form': comment_form})
+
 class PledgesList(APIView):
 
     def get(self, request):
-        pledges = Pledge.objects.all()
+        pledges = Pledge.objects.values()
         serializer = PledgeSerializer(pledges, many=True)
         return Response(serializer.data)
 
@@ -122,4 +167,4 @@ class PledgesDetail(APIView):
         pledge = self.get_object(pk)
         pledge.delete()
         return Response(status.HTTP_204_NO_CONTENT)
-        
+
