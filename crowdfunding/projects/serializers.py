@@ -50,12 +50,19 @@ class ProjectDetailSerializer(ProjectSerializer):
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):
-    post = serializers.ReadOnlyField()
+    project = ProjectSerializer (many=True, read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = (
+            'project','id','name', 'body', 'created_on'
+        )
     name = serializers.CharField(max_length=80)
-    email = serializers.EmailField()
     body = serializers.CharField()
     created_on = serializers.DateTimeField()
-    active = serializers.BooleanField()
+    id = serializers.ReadOnlyField()
+
+
 
     def create(self, validated_data):
         return Comment.objects.create(**validated_data)

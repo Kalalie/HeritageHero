@@ -71,12 +71,13 @@ class ProjectDetail(APIView):
         return Response(status.HTTP_204_NO_CONTENT)
 
 class CommentList(APIView):
-    def get(self, request):
+
+    def get(self, request, pk):
         comments = Comment.objects.values()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
-    def post(self,request):
+    def post(self,request, pk):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -89,29 +90,33 @@ class CommentList(APIView):
             status= status.HTTP_400_BAD_REQUEST
         )
 
-class CommentDetail(APIView): 
-    def add_comment_to_project(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        comment = post.comment.filter(active=True)
-        new_comment = None
-        # Comment posted
-        if request.method == 'POST':
-            comment_form = CommentForm(data=request.POST)
-            if comment_form.is_valid():
+# class CommentDetail(APIView): 
+#     def get_object(self, pk):
+#         try:
+#             return CommentDetail.objects.get(pk=pk)
+#         except Project.DoesNotExist:
+#             raise Http404
 
-                # Create Comment object but don't save to database yet
-                new_comment = comment_form.save(commit=False)
-                # Assign the current post to the comment
-                new_comment.post = post
-                # Save the comment to the database
-                new_comment.save()
-        else:
-            comment_form = CommentForm()
+#     def get(self, request, pk):
+#         comment = self.get_object(pk)
+#         serializer = CommentDetailSerializer(comment)
+#         return Response(serializer.data)
 
-        return render(request, template_name, {'post': post,
-                                            'comments': comments,
-                                            'new_comment': new_comment,
-                                            'comment_form': comment_form})
+#     def put(self, request, pk):
+#         comment = self.get_object(pk)
+#         data = request.data
+#         serializer = CommentDetailSerializer(
+#             instance=comment,
+#             data=data,
+#             partial=True
+#         )
+#         if serializer.is_valid():
+#             serializer.save()
+#         else:
+#             return Response(
+#             serializer.errors,
+#             status= status.HTTP_400_BAD_REQUEST
+        # )
 
 class PledgesList(APIView):
 
