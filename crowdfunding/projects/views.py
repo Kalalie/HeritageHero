@@ -72,11 +72,18 @@ class ProjectDetail(APIView):
 
 class CommentList(APIView):
 
+    def get_object(self, pk):
+        try:
+            return Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            raise Http404
+
     def get(self, request, pk):
-        comments = Comment.objects.values()
+        project = self.get_object(pk)
+        comments = project.comment.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-
+        
     def post(self,request, pk):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
