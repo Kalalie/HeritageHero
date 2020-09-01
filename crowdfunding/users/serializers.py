@@ -26,4 +26,5 @@ class CustomUserSerializer(serializers.Serializer):
         instance.email = validated_data.get('email', instance.email)
         instance.save()
         return instance
-        
+    
+    

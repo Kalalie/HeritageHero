@@ -47,4 +47,14 @@ class Comment(models.Model):
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.name)
 
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    # projects = models.ManyToManyField(Project, related_name="categories")
+
+    def __str__(self):
+        return self.name
+
+# def get_generic_category():
+#     return Category.objects.get_or_create(category='category')[0]
+
     

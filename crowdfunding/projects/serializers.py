@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, Pledge, Comment
+from .models import Project, Pledge, Comment, Category
 
 class PledgeSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
@@ -50,22 +50,57 @@ class ProjectDetailSerializer(ProjectSerializer):
         return instance
 
 class CommentSerializer(serializers.ModelSerializer):
-    project = ProjectSerializer (many=True, read_only=True)
-
     class Meta:
         model = Comment
         fields = (
-            'project','id','name', 'body', 'created_on'
+            'project_id','name', 'body', 'created_on'
         )
     name = serializers.CharField(max_length=80)
     body = serializers.CharField()
     created_on = serializers.DateTimeField()
-    id = serializers.ReadOnlyField()
-
+    project_id = serializers.IntegerField()
 
 
     def create(self, validated_data):
         return Comment.objects.create(**validated_data)
+
+class CommentDetailSerializer(ProjectSerializer):
+    comment = CommentSerializer(many=True, read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.body = validated_data.get('body', instance.body)
+        instance.created_on = validated_data.get('created_on', instance.created_on)
+        instance.project_id = validated_data.get('project_id', instance.project_id)
+        instance.save()
+        return instance
+
+
+class CategorySerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    lookup_field = 'name'
+
+    def create(self, validated_data):
+        return Category.objects.create(**validated_data)
+
+class CategoryProjectSerializer(CategorySerializer):
+    project_categories = ProjectSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Category
+#         fields = '__all__'
+
+#     category = serializers.CharField(max_length=100)
+
+    # def update(self, instance, validated_data):
+    #     instance.category = validated_data.get('category', instance.category)
+    #     instance.save()
+    #     return instance
+
+
+    # category = serializers.SlugRelatedField(slug_field='category', queryset=Category.objects.all())
+
+
 
 
 
