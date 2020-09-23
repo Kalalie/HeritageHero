@@ -14,9 +14,17 @@ class ProjectList(APIView):
     ]
 
     def get(self, request):
-        projects = Project.objects.all()
+        projects = self.get_query()
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
+
+    def get_query(self):
+        queryset = Project.objects.all()
+        project = self.request.query_params.get('q', None)
+        if project is not None:
+            queryset = queryset.filter(title__icontains=project)
+        return queryset
+
 
     def post(self,request):
         serializer = ProjectSerializer(data=request.data)
