@@ -36,7 +36,7 @@ class ProjectSerializer(serializers.Serializer):
 
 
 class ProjectDetailSerializer(ProjectSerializer):
-    pledge = PledgeSerializer(many=True, read_only=True)
+    pledges = PledgeSerializer(many=True, read_only=True)
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
