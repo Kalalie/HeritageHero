@@ -152,7 +152,7 @@ class PledgesList(APIView):
     def post(self,request):
         serializer = PledgeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(supporter=request.user)
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -184,7 +184,7 @@ class PledgesDetail(APIView):
             partial=True
         )
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(supporter=request.user)
         else:
             return Response(
             serializer.errors,
