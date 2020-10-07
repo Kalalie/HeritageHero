@@ -33,6 +33,7 @@ class CustomUserDetail(APIView):
             return CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
             raise Http404
+
     def get(self, request, pk):
         user = self.get_object(pk)
         serializer = CustomUserSerializer(user)
@@ -70,3 +71,14 @@ class Register(APIView):
         user.save()
         return Response({"status":"success","response":"User Successfully Created"}, status=status.HTTP_201_CREATED)
         
+
+
+class MeView(APIView):
+        
+    def get(self, request):
+        user = self.request.user
+        if user.is_authenticated:
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data)
+        else:
+            raise Http404

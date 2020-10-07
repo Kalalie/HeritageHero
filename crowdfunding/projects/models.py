@@ -37,7 +37,7 @@ class Comment(models.Model):
         'Project',
         on_delete=models.CASCADE,
         related_name='comment', 
-        related_query_name="comment", 
+        # related_query_name="comment", 
         null=True) 
 
 

@@ -70,13 +70,13 @@ class ProjectDetail(APIView):
         else:
             return Response(
             serializer.errors,
-            status= status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     def delete(self, request,pk):
         project = self.get_object(pk)
         project.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CommentList(APIView):
     permission_classes = [
@@ -216,31 +216,4 @@ class CategoryList(APIView):
             status=status.HTTP_400_BAD_REQUEST
             )
 
-# class CategoryProject(generics.RetrieveAPIView):
-#     queryset = Category.objects.all()
-#     serializer_class = CategoryProjectSerializer
-#     lookup_field = 'name'
-    
-
-
-
-    # def post(self, request):
-    #     serializer = CategorySerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(
-    #             serializer.data, 
-    #             status=status.HTTP_201_CREATED
-    #             )
-    #     return Response(
-    #         serializer.errors,
-    #         status=status.HTTP_400_BAD_REQUEST
-        # )
-
-
-# class CategoryDetail(APIView):
-#     def get(self, request):
-#         categories = Category.objects.all()
-#         serializer = CategorySerializer(categories, many=True)
-#         return Response(serializer.data)
 

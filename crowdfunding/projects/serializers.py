@@ -86,19 +86,6 @@ class CategorySerializer(serializers.Serializer):
 class CategoryProjectSerializer(CategorySerializer):
     project_categories = ProjectSerializer(many=True, read_only=True)
 
-#     class Meta:
-#         model = Category
-#         fields = '__all__'
-
-#     category = serializers.CharField(max_length=100)
-
-    # def update(self, instance, validated_data):
-    #     instance.category = validated_data.get('category', instance.category)
-    #     instance.save()
-    #     return instance
-
-
-    # category = serializers.SlugRelatedField(slug_field='category', queryset=Category.objects.all())
 
 
 
